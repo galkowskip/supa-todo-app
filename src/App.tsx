@@ -1,37 +1,16 @@
-import { createClient } from '@supabase/supabase-js';
 import React, { useEffect } from 'react';
+import { TodoService } from './services/todoService';
 
-const supabase = createClient(
-  process.env.REACT_APP_SUPABASE_URL as string,
-  process.env.REACT_APP_SUPABASE_KEY as string
-);
+import type { Todo } from './types/todo';
 
-interface Todo {
-  id: string;
-  created_at: string;
-  title: string;
-  description: string;
-  isCompleted: boolean;
-  deadline: string;
-}
-
-const getTodos = async () => {
-  const { data, error } = await supabase.from('todos').select('title')
-
-  if (error) {
-    console.error(error);
-    return [] as Todo[];
-  }
-
-  return data as Todo[];
-};
+import TodoList from './components/TodoList';
 
 function App() {
   const [todos, setTodos] = React.useState<Todo[]>([]);
 
   useEffect(() => {
     const fetchTodoData = async () => {
-      const newTodos = await getTodos();
+      const newTodos = await TodoService.getAll();
       setTodos(newTodos);
     };
 
@@ -40,16 +19,7 @@ function App() {
 
   return (
     <div className="App">
-      <pre>
-        {todos.map((todo) => (
-          <div key={todo.id}>
-            <h2>{todo.title}</h2>
-            <p>{todo.description}</p>
-            <p>{todo.deadline}</p>
-            <p>{todo.isCompleted ? 'Completed' : 'Not Completed'}</p>
-          </div>
-        ))}
-      </pre>
+      <TodoList todos={todos} />
     </div>
   );
 }
