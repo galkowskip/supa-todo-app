@@ -1,25 +1,34 @@
-import React, { useEffect } from 'react';
-import { TodoService } from './services/todoService';
+import { useEffect, useState } from "react";
+import Router from "./router";
 
-import type { Todo } from './types/todo';
-
-import TodoList from './components/TodoList';
+import { UserService } from "./services/UserService";
+import type { User } from "@supabase/supabase-js";
+import { RouterProvider } from "react-router-dom";
 
 function App() {
-  const [todos, setTodos] = React.useState<Todo[]>([]);
+  const [user, setUser] = useState<User | null>(null);
 
   useEffect(() => {
-    const fetchTodoData = async () => {
-      const newTodos = await TodoService.getAll();
-      setTodos(newTodos);
+    const fetchUser = async () => {
+      const user = await UserService.getCurrentUser();
+
+
+      setUser(user);
     };
 
-    fetchTodoData();
+    fetchUser();
   }, []);
+
+  const signOut = async () => {
+    await UserService.signOut();
+    setUser(null);
+  }
 
   return (
     <div className="App">
-      <TodoList todos={todos} />
+      <button onClick={signOut}>Sign Out</button>
+
+      <RouterProvider router={Router} />
     </div>
   );
 }
