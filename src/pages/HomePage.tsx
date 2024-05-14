@@ -5,6 +5,7 @@ import type { Todo } from "../types/todo";
 
 import TodoList from "../components/TodoList";
 import { useSelector } from "react-redux";
+import { Navigate } from "react-router-dom";
 
 function HomePage() {
     const user = useSelector((state: any) => state.user.user);
@@ -21,7 +22,7 @@ function HomePage() {
     }, []);
 
     if (!user) {
-        return <div>Not logged in</div>;
+        return <Navigate to="/login" />;
     }
 
     return (
