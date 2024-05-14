@@ -4,10 +4,10 @@ import { TodoService } from "../services/TodoService";
 import type { Todo } from "../types/todo";
 
 import TodoList from "../components/TodoList";
+import { useSelector } from "react-redux";
 
 function HomePage() {
-    
-
+    const user = useSelector((state: any) => state.user.user);
 
     const [todos, setTodos] = useState<Todo[]>([]);
 
@@ -19,6 +19,10 @@ function HomePage() {
 
         fetchTodoData();
     }, []);
+
+    if (!user) {
+        return <div>Not logged in</div>;
+    }
 
     return (
         <div>

@@ -1,4 +1,5 @@
 import supabase from "../supabaseConnector";
+import store from "../store";
 
 import { AuthError, User } from "@supabase/supabase-js";
 
@@ -17,6 +18,8 @@ export class UserService {
             return null;
         }
 
+        console.log(user);
+        store.dispatch({ type: "user/login", payload: user });
         return user
     }
 
@@ -28,8 +31,12 @@ export class UserService {
 
 
         if (data?.session) supabase.auth.setSession(data.session);
+        const user = data?.user;
 
-        return { data: data?.user || null, error };
+        console.log(user);
+        store.dispatch({ type: "user/login", payload: user });
+        
+        return { data: user || null, error };
     }
 
     static async signUp(email: string, password: string): Promise<{
@@ -46,5 +53,7 @@ export class UserService {
 
     static async signOut(): Promise<void> {
         await supabase.auth.signOut();
+        store.dispatch({ type: "user/logout" });
+        return;
     }
 }
